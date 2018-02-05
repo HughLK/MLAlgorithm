@@ -4,7 +4,6 @@
 对打乱后的样本顺序检测是否有误
 """
 
-from naivePLA import *
 import random
 
 def getDataSet(fileName):
