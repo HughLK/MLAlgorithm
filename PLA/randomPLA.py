@@ -24,7 +24,7 @@ def getDataSet(fileName):
 	return sample, label
 
 def randomPLA(sample, lable):
-	# times allowed update
+	# times of update
 	updates = 0
 	# error flag
 	error = True
