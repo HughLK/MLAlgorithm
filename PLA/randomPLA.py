@@ -23,7 +23,7 @@ def getDataSet(fileName):
 		label[i] = data[-1]
 	return sample, label
 
-def randomPLA(sample, lable):
+def randomPLA(sample, lable, step):
 	# times of update
 	updates = 0
 	# error flag
@@ -42,19 +42,19 @@ def randomPLA(sample, lable):
 		error = False
 		for i in index:
 			if label[i] * np.dot(w, sample[i]) <= 0:
-				w = w + label[i] * sample[i]
+				w = w + step * label[i] * sample[i]
 				error = True
 				updates += 1
 	return w, updates
 
-def avgUpdates(sample, label, times):
+def avgUpdates(sample, label, times, step):
 	sum = 0
 	for i in range(times):
-		sum += randomPLA(sample, label)[1]
+		sum += randomPLA(sample, label, step)[1]
 		print(i)
 	return sum / times
 
 if __name__ == '__main__':
 	sample, label = getDataSet('hw1_15_train.dat')
-	updates = avgUpdates(sample, label, 2000)
+	updates = avgUpdates(sample, label, 2000, 0.5)
 	print(updates)
