@@ -9,7 +9,7 @@ from randomPLA import getDataSet
 import random
 import math
 
-def pocketPLA(sample, lable, updates):
+def pocketPLA(sample, lable, updates, step):
 	# times of update
 	update = 0
 	# w0 = 0 including b
@@ -21,16 +21,18 @@ def pocketPLA(sample, lable, updates):
 	errorRate_wp = 1.0
 	# index of sample
 	index = range(num)
-
+	# after update w a fixed times, finish the loop and return w
 	while update < updates:
 		i = random.choice(index)
+		
 		if label[i] * np.dot(w, sample[i]) <= 0:
-			w = w + label[i] * sample[i]
+			w = w + step * label[i] * sample[i]
 			errorRate_w = getErrorRate(sample, label, w)
 			# if current w perfomances better, updates
 			if errorRate_w < errorRate_wp:
 				w_pocket = w
 				errorRate_wp = errorRate_w
+				
 			update += 1
 	return w, errorRate_wp
 
@@ -45,10 +47,10 @@ def getErrorRate(sample, label, w):
 	error_array = np.where(result_array <= 0, 1, 0)
 	return float(np.sum(error_array)) / float(num)
 
-def avgErrorRate(sample, label, times, updates):
+def avgErrorRate(sample, label, times, updates, step):
 	errors = 0.0
 	for i in range(times):
-		w, error = pocketPLA(sample, label, updates)
+		w, error = pocketPLA(sample, label, updates, step)
 		errors += error
 		print(i)
 	return w, errors / times
@@ -62,5 +64,5 @@ def verify(sample, label, w, times):
 
 if __name__ == '__main__':
 	sample, label = getDataSet('hw1_18_train.dat')
-	w, errorRate = avgErrorRate(sample, label, 2000, 100)
+	w, errorRate = avgErrorRate(sample, label, 2000, 100, 0.5)
 	print(errorRate)
