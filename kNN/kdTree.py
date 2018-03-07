@@ -44,16 +44,20 @@ def searchKdTree(Node, point):
 			n = len(point)
 			axis = depth % n
 
+			# search for closest leaf node
 			if point[axis] < Node.data[axis]:
 				searchLeafNode(Node.lchild, depth + 1)
 			elif point[axis] >= Node.data[axis]:
 				searchLeafNode(Node.rchild, depth + 1)
 
+			# calculate distance between nearstNode and point
 			distance = getDist(Node.data, point)
+			# if current node is closer than nearstNode, update nearstNode and nearstDist
 			if distance < nearstDist:
 				nearstNode = Node
 				nearstDist = distance
 
+			# check if round with radius of nearstDist and axis intersects
 			if abs(point[axis] - Node.data[axis]) <= nearstDist:
 				if point[axis] < Node.data[axis]:
 					searchLeafNode(Node.rchild, depth + 1)
@@ -81,12 +85,6 @@ def createDataSet():
 
 if __name__ == '__main__':
 	dataSet, labels = createDataSet()
-	
-	# a = sorted(dataSet.tolist(), key=lambda x: x[0])
-	# a = np.sort(dataSet, axis = 1)
-	# a=dataSet[dataSet[:,0].argsort()]
-	# print(a)
-	
 	node = createKdTree(dataSet, 2)
 	nearst = searchKdTree(node, [2.1, 3.1])
 	print(nearst.data)
