@@ -11,9 +11,9 @@ def createKdTree(dataSet, depth):
 	if len(dataSet) > 0:
 		m, n = dataSet.shape
 		midIndex = m / 2
-		# index start by 0
+		# index starting at 0
 		axis = depth % n
-		# sort dataset by axis
+		# sorting dataset by axis
 		sortedDataSet = dataSet[dataSet[:,axis].argsort()]
 
 		node = Node(sortedDataSet[midIndex])
@@ -26,40 +26,51 @@ def createKdTree(dataSet, depth):
 	else:
 		return
 
-def searchKdTree(Node, point):
+def searchKdTree(Node, point, k):
 	global nearstNode
-	global nearstDist
-	nearstNode = None
-	# distance between nearstNode and point
-	nearstDist = float('inf')
+	global furthestNode_in_kNodes
+	# dict that records k nearst nodes and its distance to point
+	nearstNode = {}
+	# furthest node's data in k nearst nodes 
+	furthestNode_in_kNodes = -1
 
 	def searchLeafNode(Node, depth = 0):
 		global nearstNode
-		global nearstDist
-		
+		global furthestNode_in_kNodes
+
 		if Node == None:
 			return
 		else:
 			# number of features
 			n = len(point)
 			axis = depth % n
-
-			# search for closest leaf node
+			
+			# searching for closest leaf node
 			if point[axis] < Node.data[axis]:
 				searchLeafNode(Node.lchild, depth + 1)
 			elif point[axis] >= Node.data[axis]:
 				searchLeafNode(Node.rchild, depth + 1)
 
-			# calculate distance between nearstNode and point
+			# if length of nearstNode is larger than 0, updates furthestNode_in_kNodes	
+			if len(nearstNode) > 0:
+				furthestNode_in_kNodes = sorted(nearstNode, key = lambda x: nearstNode[x])[-1]
+			# distance between point and current Node
 			distance = getDist(Node.data, point)
-			# if current node is closer than nearstNode, update nearstNode and nearstDist
-			if distance < nearstDist:
-				nearstNode = Node
-				nearstDist = distance
+			# get the distance of furthest node in k nearst nodes returning infinity if there's no node in nearstNode
+			furthestDist_in_kNodes = nearstNode.get(furthestNode_in_kNodes, float('inf'))
+			# if distance is less than furthestDist_in_kNodes or there's less than k nodes in nearstNode, append current node
+			if distance < furthestDist_in_kNodes or len(nearstNode) < k:
+				nearstNode[tuple(Node.data)] = distance
+				# if there's more than k nodes in nearstNode, delete the furthest node and update furthestNode_in_kNodes
+				if len(nearstNode) > k:
+					del nearstNode[furthestNode_in_kNodes]
+					furthestNode_in_kNodes = sorted(dict, key = lambda x: dict[x])[-1]
+					furthestDist_in_kNodes = nearstNode[furthestNode_in_kNodes]
 
-			# check if round with radius of nearstDist and axis intersects
-			if abs(point[axis] - Node.data[axis]) <= nearstDist:
+			# check if there's a need to search another child filed of father node
+			if abs(point[axis] - Node.data[axis]) <= furthestDist_in_kNodes:
 				if point[axis] < Node.data[axis]:
+					# check another child node
 					searchLeafNode(Node.rchild, depth + 1)
 				elif point[axis] >= Node.data[axis]:
 					searchLeafNode(Node.lchild, depth + 1)
@@ -86,5 +97,5 @@ def createDataSet():
 if __name__ == '__main__':
 	dataSet, labels = createDataSet()
 	node = createKdTree(dataSet, 2)
-	nearst = searchKdTree(node, [2.1, 3.1])
-	print(nearst.data)
+	nearst = searchKdTree(node, [2, 4.5], 3)
+	print(nearst)
