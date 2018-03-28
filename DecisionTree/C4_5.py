@@ -2,17 +2,6 @@ import numpy as np
 import math
 import treePlotter
 
-class Tree(object):
-	# Class records class of leaf node,feature records feature of non-leaf node
-	def __init__(self, Class = None, feature = None):
-		self.dict = {}
-		self.Class = Class
-		self.feature = feature
-
-	# add subtree in dict
-	def add_tree(self, val, tree):
-		self.dict[val] = tree
-
 def createDataSet():
 	data = np.array([
 			['youth', 'no', 'no', 'normal', 'no'],
@@ -96,49 +85,13 @@ def getClassOfTheMostInD(dataset):
 
 	return values[index]
 
-# def DecisionTree(dataset, features, threshold):
-# 	# values of lable of dataset
-# 	values = getFeaturesVal(dataset, -1)
-# 	# number of features
-# 	num_features = len(features)
-
-# 	# if sample in dataset belong to one class
-# 	if len(values) == 1:
-# 		return Tree(Class = values[0])
-
-# 	# if all features are uesd
-# 	if num_features == 0:
-# 		return Tree(Class = getClassOfTheMostInD(dataset))
-
-# 	# information gain ratios of all features
-# 	information_gain_ratios = np.array([informationGainRatio(dataset, features, features[i]) for i in range(num_features)])
-# 	# index of max information gain ratios
-# 	max_index = np.where(information_gain_ratios == np.max(information_gain_ratios))[0][0]
-
-# 	if information_gain_ratios[max_index] < threshold:
-# 		return Tree(Class = getClassOfTheMostInD(dataset))
-
-# 	max_igr_values = getFeaturesVal(dataset, max_index)
-# 	# split dataset by feature with max igr
-# 	subDataSet = [np.delete(dataset[dataset[:,max_index] == val], max_index, axis = 1) for val in max_igr_values]
-# 	# features removing feature with max igr
-# 	subFeatures = np.delete(features, max_index)
-# 	tree = Tree(feature = features[max_index])
-
-# 	for i in range(len(max_igr_values)):
-# 		sub_tree = DecisionTree(subDataSet[i], subFeatures, threshold)
-# 		# add subtree
-# 		tree.add_tree(max_igr_values[i], sub_tree)
-
-# 	return tree
-
 def DecisionTree(dataset, features, threshold):
 	# values of lable of dataset
 	values = getFeaturesVal(dataset, -1)
 	# number of features
 	num_features = len(features)
 
-	# if sample in dataset belong to one class
+	# if samples in dataset belong to one class
 	if len(values) == 1:
 		return values[0]
 
@@ -167,8 +120,35 @@ def DecisionTree(dataset, features, threshold):
 
 	return tree
 
+def predict(tree, features, dataset):
+	def searchTree(tree, features, data):
+		# if tree is leaf node, return its class
+		if not isinstance(tree, dict):
+			return tree
+
+		node_feature = tree.keys()[0]
+		# index of feature stored in the node
+		index = features.tolist().index(node_feature)
+		return searchTree(tree[node_feature][data[index]], features, data)
+
+	class_array = []
+	for data in dataset:
+		class_array.append(searchTree(tree, features, data))
+
+	return np.array(class_array)
+
+def getErrorRate(predict_class, dataset):
+	true_class = dataset[:, -1]
+	diff = (true_class != predict_class)
+	return np.mean(diff) if len(diff) != 0 else 0
+
 if __name__ == '__main__':
 	dataset, features = createDataSet()
-	tree = DecisionTree(dataset, features, 0.1)
-	print(tree)
+	# half to train, half to test
+	train, test = np.array_split(dataset, 2)
+	tree = DecisionTree(train, features, 0.1)
 	treePlotter.createPlot(tree)
+	predict_class = predict(tree, features, test)
+	print('predict:', predict_class)
+	score = getErrorRate(predict_class, test)
+	print('error rate:', score)
