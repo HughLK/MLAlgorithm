@@ -135,7 +135,7 @@ def predict(tree, features, dataset):
 	for data in dataset:
 		class_array.append(searchTree(tree, features, data))
 
-	return np.array(class_array)
+	return class_array
 
 def getErrorRate(predict_class, dataset):
 	true_class = dataset[:, -1]
