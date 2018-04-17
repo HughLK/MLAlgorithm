@@ -24,7 +24,7 @@ def getDataSet(fileName):
 
 def randomPLA(sample, lable, times,step):
 	# w0 = 0 including b
-	w = np.zeros((1, sample.shape[1]))
+	w = np.zeros(sample.shape[1])
 	# num of sample
 	num = sample.shape[0]
 	# indexs of sample
