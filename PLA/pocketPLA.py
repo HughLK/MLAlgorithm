@@ -63,6 +63,6 @@ def verify(sample, label, w, times):
 	return errors / times
 
 if __name__ == '__main__':
-	sample, label = getDataSet('hw1_18_train.dat')
+	sample, label = getDataSet('hw1_15_train.dat')
 	w, errorRate = avgErrorRate(sample, label, 2000, 100, 0.5)
 	print(errorRate)
