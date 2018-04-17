@@ -13,8 +13,8 @@ def pocketPLA(sample, lable, updates, step):
 	# times of update
 	update = 0
 	# w0 = 0 including b
-	w = np.zeros((1, sample.shape[1]))
-	w_pocket = np.zeros((1, sample.shape[1]))
+	w = np.zeros(sample.shape[1])
+	w_pocket = np.zeros(sample.shape[1])
 	# num of sample
 	num = sample.shape[0]
 	# error rate of best w
