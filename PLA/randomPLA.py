@@ -29,6 +29,7 @@ def randomPLA(sample, lable, times,step):
 	num = sample.shape[0]
 	# indexs of sample
 	index = range(num)
+	random.seed(10)
 
 	for t in range(times):
 		# choose index randomly
