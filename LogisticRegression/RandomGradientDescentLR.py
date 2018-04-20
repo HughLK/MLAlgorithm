@@ -11,6 +11,7 @@ def getDataSet():
 		data = dataSet[i].strip().split()
 		sample[i] = data[:2]
 		label[i] = data[-1]
+	# add 1 in every row
 	return np.hstack((np.ones((lines, 1)), sample)), label
 
 def sigmod(w, x):
@@ -34,6 +35,7 @@ def logisticRegression(X, Y, threhold, MaxTimes, step):
 
 	# probability distribution
 	P = sigmod(w, X)
+	# determing classes based on threhold
 	P[P >= threhold] = 1
 	P[P < threhold] = 0
 	return P
