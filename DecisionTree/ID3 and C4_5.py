@@ -2,23 +2,6 @@ import numpy as np
 import math
 import treePlotter
 
-# class Tree(object):
-# 	# Class records class of leaf node,feature records feature of non-leaf node
-# 	def __init__(self, Class = None, feature = None):
-# 		self.dict = {}
-# 		self.Class = Class
-# 		self.feature = feature
-
-# 	def __repr__(self):
-# 		if self.feature != None:
-# 			return self.feature
-# 		elif self.Class != None:
-# 			return self.Class
-
-# 	# add subtree in dict
-# 	def add_tree(self, val, tree):
-# 		self.dict[val] = tree
-
 def createDataSet():
 	data = np.array([
 			['youth', 'no', 'no', 'normal', 'no'],
@@ -112,43 +95,7 @@ class DecisionTree(object):
 		index = np.where(num_classes == np.max(num_classes))[0][0]
 
 		return values[index]
-
-# def DecisionTree(dataset, features, threshold):
-# 	# values of lable of dataset
-# 	values = getFeaturesVal(dataset, -1)
-# 	# number of features
-# 	num_features = len(features)
-
-# 	# if sample in dataset belong to one class
-# 	if len(values) == 1:
-# 		return Tree(Class = values[0])
-
-# 	# if all features are uesd
-# 	if num_features == 0:
-# 		return Tree(Class = getClassOfTheMostInD(dataset))
-
-# 	# information gain ratios of all features
-# 	information_gain_ratios = np.array([informationGainRatio(dataset, features, features[i]) for i in range(num_features)])
-# 	# index of max information gain ratios
-# 	max_index = np.where(information_gain_ratios == np.max(information_gain_ratios))[0][0]
-
-# 	if information_gain_ratios[max_index] < threshold:
-# 		return Tree(Class = getClassOfTheMostInD(dataset))
-
-# 	max_igr_values = getFeaturesVal(dataset, max_index)
-# 	# split dataset by feature with max igr
-# 	subDataSet = [np.delete(dataset[dataset[:,max_index] == val], max_index, axis = 1) for val in max_igr_values]
-# 	# features removing feature with max igr
-# 	subFeatures = np.delete(features, max_index)
-# 	tree = Tree(feature = features[max_index])
-
-# 	for i in range(len(max_igr_values)):
-# 		sub_tree = DecisionTree(subDataSet[i], subFeatures, threshold)
-# 		# add subtree
-# 		tree.add_tree(max_igr_values[i], sub_tree)
-
-# 	return tree
-
+	
 	def fit(self, X, Y):
 		# get relating function by str alg
 		alg_func = self.__getattribute__(self.alg)
