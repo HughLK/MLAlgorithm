@@ -1,8 +1,9 @@
 import numpy as np
 import random
 import pandas as pd
+from matplotlib import pyplot as plt
 
-def getDataSet():
+def getDataSet1():
 	dataSet = open('testSet.txt', 'r').readlines()
 	lines = len(dataSet)
 	sample = np.zeros((lines, 2))
@@ -15,6 +16,14 @@ def getDataSet():
 		label[i] = data[-1]
 	# add x0 = 1
 	return np.hstack((np.ones((lines, 1)), sample)), label
+
+def getDataSet2():
+	dataSet = pd.read_csv('./melon.csv')
+   # add x0 = 1
+	data = dataSet.drop('ripe', axis = 1).as_matrix()
+	label = dataSet['ripe'].as_matrix()
+    
+	return np.hstack((np.ones((len(data), 1)), data)), label
 
 def sigmod(w, x):
 	multi_w_x = np.dot(w, x.T)
@@ -67,10 +76,33 @@ class LogisticRegression(object):
 			w = w - self.paras['Step'] * (sigmod(w, X[i]) - Y[i]) * X[i]
 
 		return w
+    
+	def get_params(self):
+		return self.model
+
+def draw(X, Y, model):
+	# split smaple in two classes
+	is_ripe = (Y == 1)
+	X_1 = X[is_ripe]
+	X_0 = X[~is_ripe]
+	# plot samples
+	plt.scatter(X_1[:,1], X_1[:,2], marker = 'o')
+	plt.scatter(X_0[:,1], X_0[:,2], marker = 'x')
+	
+	weights = model.get_params()
+	# identify value range of first dimension
+	x = np.arange(np.min(X[:,1]), np.max(X[:,1]), 0.1)
+	# calculate values of x on another dimension
+	y = (-weights [0]-weights[1]*x)/weights[2]
+	# plot split line
+	plt.plot(x, y, color = 'r')
+	plt.show()
 
 if __name__ == '__main__':
-	X, Y = getDataSet()
+	X, Y = getDataSet1()
 	model = LogisticRegression(alg = 'StochasticGradientDescent')
 	model.fit(X, Y)
 	p = model.predict(X)
 	print(p)
+	if X.shape[1] == 3:
+		draw(X, Y, model)
